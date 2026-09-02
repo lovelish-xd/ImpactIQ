@@ -5,6 +5,7 @@
     <MAP MODE="INPUT">
       <MAPCOPY FROM="/OrderDocument/order/orderId;1;0" TO="/SaveOrderDBInput/orderId;1;0" />
       <MAPCOPY FROM="/OrderDocument/order/customerId;1;0" TO="/SaveOrderDBInput/customerId;1;0" />
+      <MAPCOPY FROM="/OrderDocument/order/customerEmail;1;0" TO="/SaveOrderDBInput/customerEmail;1;0" />
       <MAPCOPY FROM="/OrderDocument/order/totalAmount;1;0" TO="/SaveOrderDBInput/finalAmount;1;0" />
       <MAPCOPY FROM="/OrderDocument/order/discountAmount;1;0" TO="/SaveOrderDBInput/discountAmount;1;0" />
       <MAPCOPY FROM="/OrderDocument/order/status;1;0" TO="/SaveOrderDBInput/orderStatus;1;0" />
