@@ -2,6 +2,9 @@
 
 <FLOW VERSION="3.0" CLEANUP="true">
   <SEQUENCE TIMEOUT="" EXIT-ON="SUCCESS">
+    <MAP MODE="STANDALONE">
+      <MAPCOPY FROM="/OrderProcessingInput;3;0" TO="/OrderDocument;3;0" />
+    </MAP>
     <INVOKE TIMEOUT="" SERVICE="OrderProcessing.orderProcessing.services:ValidateOrder" VALIDATE-IN="$none" VALIDATE-OUT="$none" />
     <INVOKE TIMEOUT="" SERVICE="OrderProcessing.orderProcessing.services:GetCustomer" VALIDATE-IN="$none" VALIDATE-OUT="$none" />
     <INVOKE TIMEOUT="" SERVICE="OrderProcessing.orderProcessing.services:CalculatePrice" VALIDATE-IN="$none" VALIDATE-OUT="$none" />

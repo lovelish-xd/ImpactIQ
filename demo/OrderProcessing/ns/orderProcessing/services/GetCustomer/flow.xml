@@ -2,12 +2,12 @@
 
 <FLOW VERSION="3.0" CLEANUP="true">
   <SEQUENCE TIMEOUT="" EXIT-ON="SUCCESS">
-    <INVOKE TIMEOUT="" SERVICE="OrderProcessing.orderProcessing.adapters:GetCustomerDB" VALIDATE-IN="$none" VALIDATE-OUT="$none" />
     <MAP MODE="INPUT">
       <MAPTARGET><Values version="2.0"><record name="xml" javaclass="com.wm.util.Values"><value name="field_name">GetCustomerDBInput</value></record></Values></MAPTARGET>
       <MAPSOURCE><Values version="2.0"><record name="xml" javaclass="com.wm.util.Values"><value name="field_name">OrderDocument</value></record></Values></MAPSOURCE>
       <MAPCOPY FROM="/OrderDocument/order/customerId;1;0" TO="/GetCustomerDBInput/customerId;1;0" />
     </MAP>
+    <INVOKE TIMEOUT="" SERVICE="OrderProcessing.orderProcessing.adapters:GetCustomerDB" VALIDATE-IN="$none" VALIDATE-OUT="$none" />
     <MAP MODE="OUTPUT">
       <MAPCOPY FROM="/GetCustomerDBOutput/results;1;0/customerId;1;0" TO="/CustomerDocument/customer/customerId;1;0" />
       <MAPCOPY FROM="/GetCustomerDBOutput/results;1;0/customerName;1;0" TO="/CustomerDocument/customer/customerName;1;0" />
