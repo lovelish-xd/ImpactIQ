@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<FLOW VERSION="3.0" CLEANUP="true">
+  <SEQUENCE TIMEOUT="" EXIT-ON="SUCCESS">
+    <LOOP TIMEOUT="" IN-ARRAY="/OrderDocument/order/itemCosts">
+      <INVOKE TIMEOUT="" SERVICE="pub.math:addFloats" VALIDATE-IN="$none" VALIDATE-OUT="$none" />
+    </LOOP>
+    <MAP MODE="INPUT">
+      <MAPCOPY FROM="/OrderDocument/order/promotionCode;1;0" TO="/promotionCode;1;0" />
+      <MAPCOPY FROM="/OrderDocument/order/subtotal;1;0" TO="/subtotal;1;0" />
+    </MAP>
+    <INVOKE TIMEOUT="" SERVICE="OrderProcessing.orderProcessing.services:ApplyPromotion" VALIDATE-IN="$none" VALIDATE-OUT="$none" />
+    <MAP MODE="OUTPUT">
+      <MAPCOPY FROM="/discountAmount;1;0" TO="/OrderDocument/order/discountAmount;1;0" />
+      <MAPCOPY FROM="/discountedSubtotal;1;0" TO="/OrderDocument/order/subtotal;1;0" />
+      <MAPCOPY FROM="/discountedSubtotal;1;0" TO="/OrderDocument/order/totalAmount;1;0" />
+    </MAP>
+    <INVOKE TIMEOUT="" SERVICE="pub.math:addFloats" VALIDATE-IN="$none" VALIDATE-OUT="$none" />
+  </SEQUENCE>
+</FLOW>

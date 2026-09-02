@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Values version="2.0">
+  <record name="record" javaclass="com.wm.util.Values">
+    <value name="node_type">record</value>
+    <value name="node_subtype">unknown</value>
+    <value name="node_nsName">OrderProcessing.orderProcessing.docs:OrderDocument</value>
+    <value name="node_pkg">OrderProcessing</value>
+    <value name="is_public">false</value>
+    <value name="field_type">record</value>
+    <value name="field_dim">0</value>
+    <value name="nillable">true</value>
+    <value name="form_qualified">false</value>
+    <value name="is_global">false</value>
+    <array name="rec_fields" type="record" depth="1">
+      <record javaclass="com.wm.util.Values">
+        <value name="node_type">record</value>
+        <value name="node_subtype">unknown</value>
+        <value name="field_name">order</value>
+        <value name="field_type">record</value>
+        <value name="field_dim">0</value>
+        <value name="nillable">true</value>
+        <array name="rec_fields" type="record" depth="1">
+          <record javaclass="com.wm.util.Values"><value name="field_name">orderId</value><value name="field_type">string</value><value name="field_dim">0</value><value name="nillable">true</value></record>
+          <record javaclass="com.wm.util.Values"><value name="field_name">customerId</value><value name="field_type">string</value><value name="field_dim">0</value><value name="nillable">true</value></record>
+          <record javaclass="com.wm.util.Values"><value name="field_name">customerEmail</value><value name="field_type">string</value><value name="field_dim">0</value><value name="nillable">true</value></record>
+          <record javaclass="com.wm.util.Values"><value name="field_name">orderDate</value><value name="field_type">string</value><value name="field_dim">0</value><value name="nillable">true</value></record>
+          <record javaclass="com.wm.util.Values"><value name="field_name">lineItems</value><value name="field_type">string</value><value name="field_dim">1</value><value name="nillable">true</value></record>
+          <record javaclass="com.wm.util.Values"><value name="field_name">itemCosts</value><value name="field_type">string</value><value name="field_dim">1</value><value name="nillable">true</value></record>
+          <record javaclass="com.wm.util.Values"><value name="field_name">promotionCode</value><value name="field_type">string</value><value name="field_dim">0</value><value name="nillable">true</value></record>
+          <record javaclass="com.wm.util.Values"><value name="field_name">discountAmount</value><value name="field_type">string</value><value name="field_dim">0</value><value name="nillable">true</value></record>
+          <record javaclass="com.wm.util.Values"><value name="field_name">subtotal</value><value name="field_type">string</value><value name="field_dim">0</value><value name="nillable">true</value></record>
+          <record javaclass="com.wm.util.Values"><value name="field_name">taxAmount</value><value name="field_type">string</value><value name="field_dim">0</value><value name="nillable">true</value></record>
+          <record javaclass="com.wm.util.Values"><value name="field_name">totalAmount</value><value name="field_type">string</value><value name="field_dim">0</value><value name="nillable">true</value></record>
+          <record javaclass="com.wm.util.Values"><value name="field_name">status</value><value name="field_type">string</value><value name="field_dim">0</value><value name="nillable">true</value></record>
+        </array>
+        <value name="rec_closed">true</value>
+        <value name="modifiable">true</value>
+      </record>
+    </array>
+    <value name="modifiable">true</value>
+  </record>
+</Values>

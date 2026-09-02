@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<FLOW VERSION="3.0" CLEANUP="true">
+  <SEQUENCE TIMEOUT="" EXIT-ON="SUCCESS">
+    <COMMENT>--main--</COMMENT>
+    <SEQUENCE TIMEOUT="" EXIT-ON="FAILURE">
+      <COMMENT>--try block--</COMMENT>
+      <INVOKE TIMEOUT="" SERVICE="OrderProcessing.orderProcessing.services:OrderProcessing" VALIDATE-IN="$none" VALIDATE-OUT="$none" />
+    </SEQUENCE>
+    <SEQUENCE TIMEOUT="" EXIT-ON="DONE">
+      <COMMENT>--catch block--</COMMENT>
+      <INVOKE TIMEOUT="" SERVICE="pub.flow:getLastError" VALIDATE-IN="$none" VALIDATE-OUT="$none">
+        <COMMENT>--catching last error--</COMMENT>
+      </INVOKE>
+      <EXIT FROM="$flow" SIGNAL="SUCCESS" FAILURE-MESSAGE="">
+        <COMMENT>--exiting from flow--</COMMENT>
+      </EXIT>
+    </SEQUENCE>
+  </SEQUENCE>
+</FLOW>

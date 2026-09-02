@@ -1,0 +1,27 @@
+message OrderProcessing_orderProcessing_docs_OrderDocument {
+optional  OrderProcessing_orderProcessing_docs_OrderDocument_order order = 1;
+optional  pub_publish_envelope _env = 536870910;
+}
+message OrderProcessing_orderProcessing_docs_OrderDocument_order {
+optional  string orderId = 1;
+optional  string customerId = 2;
+optional  string customerEmail = 3;
+optional  string orderDate = 4;
+repeated  string lineItems = 5;
+repeated  string itemCosts = 6;
+optional  string promotionCode = 7;
+optional  string discountAmount = 8;
+optional  string subtotal = 9;
+optional  string taxAmount = 10;
+optional  string totalAmount = 11;
+optional  string status = 12;
+}
+message pub_publish_envelope {
+optional  string activation = 1;
+optional  int32 appLastSeqn = 2;
+optional  string appPassword = 3;
+optional  int32 appSeqn = 4;
+optional  string appUserName = 5;
+optional  int32 priority = 6;
+optional  string businessContext = 7;
+}

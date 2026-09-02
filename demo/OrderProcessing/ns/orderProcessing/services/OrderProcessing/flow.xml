@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<FLOW VERSION="3.0" CLEANUP="true">
+  <SEQUENCE TIMEOUT="" EXIT-ON="SUCCESS">
+    <INVOKE TIMEOUT="" SERVICE="OrderProcessing.orderProcessing.services:ValidateOrder" VALIDATE-IN="$none" VALIDATE-OUT="$none" />
+    <INVOKE TIMEOUT="" SERVICE="OrderProcessing.orderProcessing.services:GetCustomer" VALIDATE-IN="$none" VALIDATE-OUT="$none" />
+    <INVOKE TIMEOUT="" SERVICE="OrderProcessing.orderProcessing.services:CalculatePrice" VALIDATE-IN="$none" VALIDATE-OUT="$none" />
+    <INVOKE TIMEOUT="" SERVICE="OrderProcessing.orderProcessing.services:SaveOrder" VALIDATE-IN="$none" VALIDATE-OUT="$none" />
+    <INVOKE TIMEOUT="" SERVICE="OrderProcessing.orderProcessing.services:SendConfirmation" VALIDATE-IN="$none" VALIDATE-OUT="$none" />
+  </SEQUENCE>
+</FLOW>

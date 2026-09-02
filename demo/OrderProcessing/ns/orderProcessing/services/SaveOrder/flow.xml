@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<FLOW VERSION="3.0" CLEANUP="true">
+  <SEQUENCE TIMEOUT="" EXIT-ON="SUCCESS">
+    <MAP MODE="INPUT">
+      <MAPCOPY FROM="/OrderDocument/order/orderId;1;0" TO="/SaveOrderDBInput/orderId;1;0" />
+      <MAPCOPY FROM="/OrderDocument/order/customerId;1;0" TO="/SaveOrderDBInput/customerId;1;0" />
+      <MAPCOPY FROM="/OrderDocument/order/totalAmount;1;0" TO="/SaveOrderDBInput/finalAmount;1;0" />
+      <MAPCOPY FROM="/OrderDocument/order/discountAmount;1;0" TO="/SaveOrderDBInput/discountAmount;1;0" />
+      <MAPCOPY FROM="/OrderDocument/order/status;1;0" TO="/SaveOrderDBInput/orderStatus;1;0" />
+    </MAP>
+    <INVOKE TIMEOUT="" SERVICE="OrderProcessing.orderProcessing.adapters:SaveOrderDB" VALIDATE-IN="$none" VALIDATE-OUT="$none" />
+  </SEQUENCE>
+</FLOW>

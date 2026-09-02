@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<FLOW VERSION="3.0" CLEANUP="true">
+  <SEQUENCE TIMEOUT="" EXIT-ON="SUCCESS">
+    <BRANCH TIMEOUT="" NAME="promotion-code">
+      <SEQUENCE TIMEOUT="" EXIT-ON="SUCCESS">
+        <MAP MODE="STANDALONE">
+          <MAPSET NAME="Setter" OVERWRITE="true" VARIABLES="false" GLOBALVARIABLES="false" FIELD="/discountAmount;1;0"><DATA ENCODING="XMLValues" I18N="true"><Values version="2.0"><value name="xml">10.00</value></Values></DATA></MAPSET>
+        </MAP>
+      </SEQUENCE>
+      <SEQUENCE TIMEOUT="" EXIT-ON="DONE">
+        <MAP MODE="STANDALONE"><MAPSET NAME="Setter" OVERWRITE="true" VARIABLES="false" GLOBALVARIABLES="false" FIELD="/discountAmount;1;0"><DATA ENCODING="XMLValues" I18N="true"><Values version="2.0"><value name="xml">0</value></Values></DATA></MAPSET></MAP>
+      </SEQUENCE>
+    </BRANCH>
+    <MAP MODE="STANDALONE">
+      <MAPCOPY FROM="/subtotal;1;0" TO="/discountedSubtotal;1;0" />
+    </MAP>
+  </SEQUENCE>
+</FLOW>

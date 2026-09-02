@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<FLOW VERSION="3.0" CLEANUP="true">
+  <SEQUENCE TIMEOUT="" EXIT-ON="SUCCESS">
+    <BRANCH TIMEOUT="" NAME="required-fields">
+      <SEQUENCE TIMEOUT="" EXIT-ON="SUCCESS"><COMMENT>Order contains required identifiers.</COMMENT></SEQUENCE>
+      <SEQUENCE TIMEOUT="" EXIT-ON="DONE"><INVOKE TIMEOUT="" SERVICE="pub.flow:getLastError" VALIDATE-IN="$none" VALIDATE-OUT="$none" /></SEQUENCE>
+    </BRANCH>
+  </SEQUENCE>
+</FLOW>
