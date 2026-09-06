@@ -158,7 +158,8 @@ Total tests across the project: **100 tests passing** in ~4-5 seconds (`python -
 | `tests/test_analyzer.py` | 14 | ✅ Passing | Orchestrator, JSON serialization, same-revision |
 | `tests/test_ai.py` | 6 | ✅ Passing | AI prompt generation, mock API calls, graceful fallbacks |
 | `tests/test_e2e.py` | 14 | ✅ Passing | Full end-to-end integration, demo semantic changes |
-| **Total** | **100** | **✅ All Passing** | |
+| `tests/test_ai.py` | 10 | ✅ Passing | AI explanation prompt, graceful fallback, provider auto-detect, status endpoint |
+| **Total** | **103** | **✅ All Passing** | |
 
 ---
 
@@ -174,18 +175,31 @@ Total tests across the project: **100 tests passing** in ~4-5 seconds (`python -
 ## 7. Configuration & Environment Notes
 
 - **Multi-Provider AI Layer**: `src/ai/explanation.py` supports:
-  - **Groq / Grok**: `GROK_API_KEY` or `GROQ_API_KEY` (using ultra-fast models like `openai/gpt-oss-120b`).
+  - **Groq / Grok**: Auto-detects Groq Secret Keys (`gsk_...`) in `GROK_API_KEY` or `GROQ_API_KEY` (using ultra-fast models like `openai/gpt-oss-120b`).
   - **xAI Grok**: `GROK_API_KEY` or `XAI_API_KEY` (using `grok-2-latest`).
   - **Google Gemini**: `GEMINI_API_KEY` (using `gemini-3.6-flash`).
   - **OpenAI**: `OPENAI_API_KEY` (using `gpt-4o-mini` or `OPENAI_MODEL`).
-- **Automatic .env Loading**: `.env.local` and `.env` in the repository root are loaded automatically without third-party packages.
+- **AI Status Endpoint**: `/api/ai-status` exposes active provider information (`configured: true/false`, `provider: ...`, `model: ...`) to client on page load.
+- **UI Lifecycle**:
+  - Initial load queries `/api/ai-status` to display `● AI Ready · Groq (openai/gpt-oss-120b)` immediately if configured.
+  - Clicking "Analyze Impact" sets AI card to `● Generating AI explanation…` (with pulsing indicator).
+  - Deterministic results render instantly; AI explanation updates smoothly when the asynchronous `/api/explain` promise resolves.
+- **UI Enhancements**:
+  - Polished enterprise-style sidebar (260px fixed width, Slate-900 `#0f172a` palette).
+  - Centered dark-themed logo (`logo.png`) without redundant text headings.
+  - Added muted `ANALYSIS` uppercase section label for visual hierarchy.
+  - Added subtle inline line-style SVG icons for all 7 navigation items with cyan active accent indicator (`::before` pill) and compact vertical rhythm.
+  - Streamlined live mode status card anchored at the bottom with soft green dot.
+  - Added `scroll-margin-top: 135px;` and `html { scroll-behavior: smooth; }` so navigating via the left sidebar never clips section headers behind the sticky commit dropdown toolbar.
+  - Active navigation tab updates strictly on user click, with no automatic switching during page scrolling.
 - **Server Concurrency**: `server.py` uses `ThreadingHTTPServer` with an in-memory cache so simultaneous static, analyzer, and AI explanation requests do not block each other.
 
 ---
 
-## 8. Next Recommended Step
+## 8. Current System Status
 
-- Restart the server process in your terminal (`python server.py`) to run the multi-threaded server with live Groq/Grok AI explanations.
-- Create a Git commit to preserve the working tree.
+- **Engine & Analyzer:** 100% functional, 103 unit tests passing.
+- **Server:** Multi-threaded on port 8765 with `/api/analyze`, `/api/explain`, `/api/ai-status`, `/api/commits`.
+- **UI:** Connected to live analyzer, displaying official logo, sticky toolbar with smooth scroll offset, interactive risk breakdown, regression recommendations, and live Groq explanation.
 
 

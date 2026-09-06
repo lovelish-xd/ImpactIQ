@@ -5,6 +5,8 @@ const state = {
   hasAnalyzed: false,
   isLoading: false,
   isLive: false,
+  aiConfigured: false,
+  aiProvider: "",
 };
 
 const elements = {
@@ -246,7 +248,38 @@ function renderAnalysis(analysis) {
   renderChanges(analysis.changes || []);
   renderGraph(analysis.dependencies);
   renderTests(analysis.regressionTests);
-  renderAIExplanation(analysis.aiExplanation || null);
+  if (analysis.aiExplanation) {
+    renderAIExplanation(analysis.aiExplanation);
+  }
+}
+
+async function checkAIStatus() {
+  try {
+    const res = await fetch(`${API_BASE}/api/ai-status`);
+    if (res.ok) {
+      const data = await res.json();
+      state.aiConfigured = Boolean(data.configured);
+      state.aiProvider = data.provider || "AI";
+      if (data.configured) {
+        if (elements.aiStatusDot) elements.aiStatusDot.className = "status-dot live";
+        if (elements.aiStatusText) elements.aiStatusText.textContent = `AI Ready · ${data.provider}`;
+        if (elements.aiContent && !state.hasAnalyzed) {
+          elements.aiContent.innerHTML = `<p class="ai-placeholder">AI explanation is configured and ready (${data.provider}). Click <strong>Analyze Impact</strong> to generate natural language architecture insights alongside deterministic results.</p>`;
+        }
+        return;
+      }
+    }
+  } catch {
+    // ignore
+  }
+
+  state.aiConfigured = false;
+  state.aiProvider = "";
+  if (elements.aiStatusDot) elements.aiStatusDot.className = "status-dot mock";
+  if (elements.aiStatusText) elements.aiStatusText.textContent = "AI not configured (optional)";
+  if (elements.aiContent && !state.hasAnalyzed) {
+    elements.aiContent.innerHTML = `<p class="ai-placeholder">AI explanation is optional. Configure GROK_API_KEY, GEMINI_API_KEY, or OPENAI_API_KEY in .env.local to enable automated natural language insights. Deterministic impact, risk, and regression recommendations are fully functional without AI.</p>`;
+  }
 }
 
 function setStatus(mode, label, detail) {
@@ -280,6 +313,7 @@ async function tryLiveApi() {
       populateSelectors(data.commits);
       state.isLive = true;
       setStatus("live", "Live mode", "Connected to analyzer");
+      checkAIStatus();
       return true;
     }
   } catch {
@@ -304,6 +338,14 @@ async function runLiveAnalysis() {
   if (!base || !target) return;
 
   setLoading(true);
+
+  // Set AI card to generating state if configured
+  if (elements.aiStatusDot) elements.aiStatusDot.className = "status-dot live pulse";
+  if (elements.aiStatusText) elements.aiStatusText.textContent = "Generating AI explanation…";
+  if (elements.aiContent) {
+    elements.aiContent.innerHTML = `<p class="ai-placeholder">Synthesizing natural language architecture insights from deterministic analysis${state.aiProvider ? ` using ${state.aiProvider}` : ""}…</p>`;
+  }
+
   try {
     const url = `${API_BASE}/api/analyze?base=${encodeURIComponent(base)}&target=${encodeURIComponent(target)}`;
     const response = await fetch(url, { signal: AbortSignal.timeout(15000) });
@@ -320,16 +362,26 @@ async function runLiveAnalysis() {
 
     // Asynchronously request AI explanation without blocking the UI
     fetch(`${API_BASE}/api/explain?base=${encodeURIComponent(base)}&target=${encodeURIComponent(target)}`, {
-      signal: AbortSignal.timeout(15000),
+      signal: AbortSignal.timeout(25000),
     })
-      .then((res) => (res.ok ? res.json() : null))
-      .then((aiData) => {
-        if (aiData && aiData.explanation) {
+      .then(async (res) => {
+        const aiData = await res.json();
+        if (res.ok && aiData && aiData.explanation) {
           renderAIExplanation(aiData.explanation);
+        } else {
+          renderAIExplanation({
+            available: false,
+            reason: "AI explanation unavailable",
+            message: aiData?.error || "Unable to generate AI explanation.",
+          });
         }
       })
-      .catch(() => {
-        // AI explanation is optional; failures are handled gracefully
+      .catch((err) => {
+        renderAIExplanation({
+          available: false,
+          reason: "AI explanation timed out",
+          message: "The AI explanation request timed out. Deterministic analysis results remain accurate.",
+        });
       });
   } catch (error) {
     elements.analysisStatus.textContent = "Connection error";
@@ -350,8 +402,21 @@ elements.analyzeButton.addEventListener("click", () => {
   }
 });
 
+// Sidebar navigation click handler
+function initNavTracking() {
+  const navLinks = document.querySelectorAll(".nav-item");
+
+  navLinks.forEach((link) => {
+    link.addEventListener("click", () => {
+      navLinks.forEach((item) => item.classList.remove("active"));
+      link.classList.add("active");
+    });
+  });
+}
+
 // Initialize: try live API first, fall back to mock data
 (async () => {
+  initNavTracking();
   const isLive = await tryLiveApi();
   if (!isLive) {
     await loadMockData().catch((error) => {

@@ -20,7 +20,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.analyzer import analyze
-from src.ai import explain_analysis
+from src.ai import explain_analysis, get_ai_status
 from src.ai.explanation import _ensure_env_loaded
 from src.serializer import serialize_analysis
 
@@ -50,6 +50,8 @@ class ImpactIQHandler(SimpleHTTPRequestHandler):
             self._handle_analyze(parsed)
         elif parsed.path == "/api/explain":
             self._handle_explain(parsed)
+        elif parsed.path == "/api/ai-status":
+            self._handle_ai_status()
         elif parsed.path == "/api/commits":
             self._handle_commits()
         else:
@@ -117,6 +119,14 @@ class ImpactIQHandler(SimpleHTTPRequestHandler):
             self._json_response(200, {"explanation": explanation.to_dict()})
         except Exception as exc:
             self._json_error(500, f"Explanation failed: {exc}")
+
+    def _handle_ai_status(self):
+        """Return the current AI configuration status."""
+        try:
+            status = get_ai_status()
+            self._json_response(200, status)
+        except Exception as exc:
+            self._json_error(500, f"Status check failed: {exc}")
 
     def _handle_commits(self):
         """List available Git commits."""

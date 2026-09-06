@@ -2,7 +2,13 @@ import json
 import unittest
 from unittest.mock import MagicMock, patch
 
-from src.ai import AIExplanation, build_explanation_prompt, explain_analysis
+from src.ai import (
+    AIExplanation,
+    build_explanation_prompt,
+    detect_configured_provider,
+    explain_analysis,
+    get_ai_status,
+)
 
 
 class AIExplanationTests(unittest.TestCase):
@@ -164,6 +170,26 @@ class AIExplanationTests(unittest.TestCase):
             result = explain_analysis(self.sample_analysis, api_key="dummy-key", provider="gemini")
             self.assertFalse(result.available)
             self.assertIn("unreachable", result.reason.lower())
+
+    def test_get_ai_status_when_configured(self):
+        with patch.dict("os.environ", {"GROQ_API_KEY": "gsk_test12345"}, clear=True):
+            status = get_ai_status()
+            self.assertTrue(status["configured"])
+            self.assertIn("Groq", status["provider"])
+
+    def test_get_ai_status_when_unconfigured(self):
+        with patch.dict("os.environ", {}, clear=True):
+            with patch("src.ai.explanation._load_env_file"):
+                status = get_ai_status()
+                self.assertFalse(status["configured"])
+                self.assertEqual(status["provider"], "None")
+
+    def test_detect_groq_from_gsk_prefix(self):
+        with patch.dict("os.environ", {"GROK_API_KEY": "gsk_test999"}, clear=True):
+            with patch("src.ai.explanation._load_env_file"):
+                provider, key, model = detect_configured_provider()
+                self.assertEqual(provider, "groq")
+                self.assertEqual(key, "gsk_test999")
 
 
 if __name__ == "__main__":

@@ -115,6 +115,90 @@ def build_explanation_prompt(analysis_dict: dict[str, Any]) -> str:
     )
 
 
+def detect_configured_provider(
+    api_key: str | None = None,
+    provider: str | None = None,
+    load_env: bool = True,
+) -> tuple[str | None, str, str]:
+    """Detect configured AI provider, API key, and model.
+
+    Returns (provider_name, key, model) or (None, "", "") if unconfigured.
+    Supports groq (auto-detected from gsk_ keys), xAI grok, gemini, and openai.
+    """
+    if load_env:
+        _ensure_env_loaded()
+
+    groq_key = api_key if provider == "groq" else (api_key or os.environ.get("GROQ_API_KEY", ""))
+    grok_key = api_key if provider in ("grok", "xai") else (api_key or os.environ.get("GROK_API_KEY", "") or os.environ.get("XAI_API_KEY", ""))
+    gemini_key = api_key if provider == "gemini" else (api_key or os.environ.get("GEMINI_API_KEY", ""))
+    openai_key = api_key if provider == "openai" else (api_key or os.environ.get("OPENAI_API_KEY", ""))
+
+    # Auto-detect if grok_key is actually a Groq key (starts with gsk_)
+    if grok_key and grok_key.startswith("gsk_") and not groq_key:
+        groq_key = grok_key
+        grok_key = ""
+
+    if provider == "groq" and groq_key:
+        model = os.environ.get("GROQ_MODEL", os.environ.get("GROK_MODEL", "openai/gpt-oss-120b"))
+        return ("groq", groq_key, model)
+    elif provider in ("grok", "xai") and grok_key:
+        model = os.environ.get("XAI_MODEL", os.environ.get("GROK_MODEL", "grok-2-latest"))
+        return ("grok", grok_key, model)
+    elif provider == "gemini" and gemini_key:
+        model = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash")
+        return ("gemini", gemini_key, model)
+    elif provider == "openai" and openai_key:
+        model = os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
+        return ("openai", openai_key, model)
+    elif provider:
+        return (None, "", "")
+
+    # Precedence when auto-detecting without explicit provider:
+    if groq_key:
+        model = os.environ.get("GROQ_MODEL", os.environ.get("GROK_MODEL", "openai/gpt-oss-120b"))
+        return ("groq", groq_key, model)
+    if grok_key:
+        model = os.environ.get("XAI_MODEL", os.environ.get("GROK_MODEL", "grok-2-latest"))
+        return ("grok", grok_key, model)
+    if gemini_key:
+        model = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash")
+        return ("gemini", gemini_key, model)
+    if openai_key:
+        model = os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
+        return ("openai", openai_key, model)
+
+    return (None, "", "")
+
+
+def get_ai_status() -> dict[str, Any]:
+    """Check AI provider configuration status."""
+    provider_name, key, model = detect_configured_provider()
+    if not provider_name or not key:
+        return {
+            "configured": False,
+            "provider": "None",
+            "model": "",
+            "message": (
+                "AI explanation is optional. Configure GROK_API_KEY / GROQ_API_KEY, GEMINI_API_KEY, "
+                "or OPENAI_API_KEY in .env.local to enable automated natural language insights."
+            ),
+        }
+
+    display_names = {
+        "groq": f"Groq ({model})",
+        "grok": f"xAI Grok ({model})",
+        "gemini": f"Google Gemini ({model})",
+        "openai": f"OpenAI ({model})",
+    }
+    display = display_names.get(provider_name, f"{provider_name} ({model})")
+    return {
+        "configured": True,
+        "provider": display,
+        "model": model,
+        "message": f"AI explanation ready using {display}.",
+    }
+
+
 def explain_analysis(
     analysis_data: dict[str, Any],
     api_key: str | None = None,
@@ -131,36 +215,11 @@ def explain_analysis(
     if load_env:
         _ensure_env_loaded()
 
-    groq_key = api_key if provider == "groq" else (api_key or os.environ.get("GROQ_API_KEY", ""))
-    grok_key = api_key if provider in ("grok", "xai") else (api_key or os.environ.get("GROK_API_KEY", "") or os.environ.get("XAI_API_KEY", ""))
-    # Detect if grok_key is a Groq key (starts with gsk_)
-    if grok_key and grok_key.startswith("gsk_") and not groq_key:
-        groq_key = grok_key
-    elif grok_key and not groq_key and grok_key.startswith("gsk_"):
-        groq_key = grok_key
+    chosen_provider, key, _ = detect_configured_provider(
+        api_key=api_key, provider=provider, load_env=load_env
+    )
 
-    gemini_key = api_key if provider == "gemini" else (api_key or os.environ.get("GEMINI_API_KEY", ""))
-    openai_key = api_key if provider == "openai" else (api_key or os.environ.get("OPENAI_API_KEY", ""))
-
-    if provider:
-        chosen_provider = provider
-    elif groq_key:
-        chosen_provider = "groq"
-    elif grok_key:
-        chosen_provider = "grok"
-    elif gemini_key:
-        chosen_provider = "gemini"
-    elif openai_key:
-        chosen_provider = "openai"
-    else:
-        chosen_provider = None
-
-    if not chosen_provider or (
-        (chosen_provider == "groq" and not groq_key)
-        or (chosen_provider in ("grok", "xai") and not grok_key)
-        or (chosen_provider == "gemini" and not gemini_key)
-        or (chosen_provider == "openai" and not openai_key)
-    ):
+    if not chosen_provider or not key:
         return AIExplanation(
             available=False,
             provider="none",
@@ -177,13 +236,13 @@ def explain_analysis(
 
     try:
         if chosen_provider == "groq":
-            return _call_groq(prompt, groq_key, timeout)
+            return _call_groq(prompt, key, timeout)
         elif chosen_provider in ("grok", "xai"):
-            return _call_xai(prompt, grok_key, timeout)
+            return _call_xai(prompt, key, timeout)
         elif chosen_provider == "gemini":
-            return _call_gemini(prompt, gemini_key, timeout)
+            return _call_gemini(prompt, key, timeout)
         elif chosen_provider == "openai":
-            return _call_openai(prompt, openai_key, timeout)
+            return _call_openai(prompt, key, timeout)
         else:
             return AIExplanation(
                 available=False,

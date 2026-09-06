@@ -10,21 +10,68 @@
     <div class="app-shell">
       <aside class="sidebar" aria-label="ImpactIQ workspace">
         <div class="brand">
-          <div class="brand-mark" aria-hidden="true">IQ</div>
-          <div>
-            <p class="eyebrow">ImpactIQ</p>
-            <h1>Change Impact Analysis</h1>
-          </div>
+          <img src="logo.png" alt="ImpactIQ" class="brand-logo">
         </div>
 
+        <div class="nav-section-label">ANALYSIS</div>
+
         <nav class="nav-list" aria-label="Analysis sections">
-          <a href="#summary" class="nav-item active">Summary</a>
-          <a href="#assets" class="nav-item">Affected Assets</a>
-          <a href="#risk" class="nav-item">Risk</a>
-          <a href="#changes" class="nav-item">Changes</a>
-          <a href="#dependency" class="nav-item">Impact Path</a>
-          <a href="#tests" class="nav-item">Regression Tests</a>
-          <a href="#ai-explanation" class="nav-item">AI Explanation</a>
+          <a href="#summary" class="nav-item active">
+            <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="3" width="7" height="9" rx="1"/>
+              <rect x="14" y="3" width="7" height="5" rx="1"/>
+              <rect x="14" y="12" width="7" height="9" rx="1"/>
+              <rect x="3" y="16" width="7" height="5" rx="1"/>
+            </svg>
+            <span>Summary</span>
+          </a>
+          <a href="#assets" class="nav-item">
+            <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+              <polyline points="2 17 12 22 22 17"/>
+              <polyline points="2 12 12 17 22 12"/>
+            </svg>
+            <span>Affected Assets</span>
+          </a>
+          <a href="#risk" class="nav-item">
+            <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <span>Risk</span>
+          </a>
+          <a href="#changes" class="nav-item">
+            <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="9" y1="15" x2="15" y2="15"/>
+              <line x1="12" y1="12" x2="12" y2="18"/>
+            </svg>
+            <span>Changes</span>
+          </a>
+          <a href="#dependency" class="nav-item">
+            <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="18" cy="18" r="3"/>
+              <circle cx="6" cy="6" r="3"/>
+              <path d="M6 9v12"/>
+              <path d="M18 15a9 9 0 0 0-9-9H6"/>
+            </svg>
+            <span>Impact Path</span>
+          </a>
+          <a href="#tests" class="nav-item">
+            <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="m9 11 3 3L22 4"/>
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+            </svg>
+            <span>Regression Tests</span>
+          </a>
+          <a href="#ai-explanation" class="nav-item">
+            <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/>
+            </svg>
+            <span>AI Explanation</span>
+          </a>
         </nav>
 
         <div class="status-panel">
@@ -137,10 +184,10 @@
           <div id="aiExplanationCard" class="ai-card">
             <div class="ai-status-badge">
               <span id="aiBadgeDot" class="status-dot mock"></span>
-              <span id="aiStatusText">AI not configured</span>
+              <span id="aiStatusText">Awaiting analysis</span>
             </div>
             <div id="aiContent" class="ai-content">
-              <p class="ai-placeholder">AI explanation is optional. It translates deterministic facts into natural language explanations without altering changes, impact, or risk scores.</p>
+              <p class="ai-placeholder">Run an analysis to generate natural language explanations of the changes, dependency impact, and risk scores.</p>
             </div>
           </div>
         </section>
