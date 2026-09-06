@@ -85,6 +85,28 @@
         { "from": "saveOrderDb", "to": "ordersTable", "label": "inserts" }
       ]
     },
+    "changes": [
+      {
+        "type": "MODIFIED",
+        "asset": "OrderProcessing.orderProcessing.services:SaveOrder",
+        "description": "Added MAPCOPY mapping from OrderDocument/order/customerEmail to SaveOrderDBInput/customerEmail"
+      },
+      {
+        "type": "MODIFIED",
+        "asset": "OrderProcessing.orderProcessing.adapters:SaveOrderDB",
+        "description": "Added customerEmail (java.lang.String) field to input signature"
+      },
+      {
+        "type": "MODIFIED",
+        "asset": "SaveOrderDB/query.sql",
+        "description": "INSERT statement updated with customer_email column and 6th parameter placeholder"
+      },
+      {
+        "type": "REUSED",
+        "asset": "OrderProcessing.orderProcessing.docs:OrderDocument",
+        "description": "Reused existing customerEmail field definition for persistence flow"
+      }
+    ],
     "regressionTests": [
       {
         "name": "Order save includes customer email",
@@ -111,6 +133,17 @@
         "priority": "Medium",
         "scenario": "Invoke scheduler and confirm the existing OrderProcessing path still reaches SaveOrder and SendConfirmation."
       }
-    ]
+    ],
+    "aiExplanation": {
+      "available": true,
+      "provider": "ImpactIQ AI (Mock / Gemini)",
+      "summary": "SaveOrder now forwards customerEmail into SaveOrderDB to persist customer contact data into the orders table. The scope is localized to the persistence contract and input mapping with no alterations to upstream scheduler or orchestration flows.",
+      "sections": {
+        "What Changed": "SaveOrderDBInput gained a new string field customerEmail. SaveOrder flow added a MAPCOPY step connecting OrderDocument/order/customerEmail to SaveOrderDBInput/customerEmail. The SQL fixture was updated to insert customer_email with six parameter placeholders instead of five.",
+        "Impact Path": "Changes originate in the SaveOrder flow mapping and propagate downstream to SaveOrderDB and the orders database table. Direct caller OrderProcessing and the scheduled trigger remain unimpacted in signature and orchestration flow.",
+        "Risk Analysis": "Assessed at Medium risk (score 64). The primary drivers are the modified adapter input contract and database insert parameter alignment. The risk remains contained because no transaction orchestration or business validation rules were altered.",
+        "Testing Rationale": "Regression testing focuses on verifying database insertion with customerEmail present and absent, confirming parameter ordering in the SQL statement, and ensuring existing order fields remain unaffected."
+      }
+    }
   }
 }

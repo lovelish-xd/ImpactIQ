@@ -329,7 +329,8 @@ async function loadMockData() {
   }
   state.data = await response.json();
   populateSelectorsFromMock(state.data.commits);
-  setStatus("mock", "Mock mode", "Analyzer API not connected");
+  setStatus("mock", "Mock mode", "Demo data ready");
+  if (elements.aiStatusText) elements.aiStatusText.textContent = "Mock explanation ready";
 }
 
 async function runLiveAnalysis() {
@@ -397,8 +398,14 @@ elements.analyzeButton.addEventListener("click", () => {
   if (state.isLive) {
     runLiveAnalysis();
   } else if (state.data) {
-    state.hasAnalyzed = true;
-    renderAnalysis(state.data.analysis);
+    setLoading(true);
+    if (elements.aiStatusDot) elements.aiStatusDot.className = "status-dot live pulse";
+    if (elements.aiStatusText) elements.aiStatusText.textContent = "Loading analysis & AI insights…";
+    setTimeout(() => {
+      setLoading(false);
+      state.hasAnalyzed = true;
+      renderAnalysis(state.data.analysis);
+    }, 350);
   }
 });
 
