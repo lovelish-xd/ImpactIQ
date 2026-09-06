@@ -2,7 +2,7 @@
 
 ImpactIQ is a hackathon prototype for AI-assisted change impact analysis in enterprise integration environments, with IBM webMethods Integration Server as the motivating platform.
 
-The repository currently contains the first milestone only: a controlled Order Processing demo, a real exported webMethods package used as reference context, and validation utilities. The parser, comparison engine, dependency graph, risk scoring, AI layer, API, and frontend are future work.
+The repository currently contains an early prototype: a controlled Order Processing demo, a real exported webMethods package used as reference context, validation utilities, and an initial static UI shell. The parser, comparison engine, dependency graph, risk scoring, AI layer, and API are future work.
 
 ## Project structure
 
@@ -12,6 +12,7 @@ impactiq/
 |-- demo/OrderProcessing/   one canonical demo package representation
 |-- src/                    reserved module boundaries for later milestones
 |-- tests/                  standard-library validation scripts
+|-- ui/                     static MVP shell with mock analysis data
 |-- requirements.txt
 `-- README.md
 ```
@@ -105,3 +106,13 @@ python tests/validate_demo.py
 ```
 
 The validator checks XML well-formedness, standard artifact roots and metadata, flow references, scheduler orchestration, document fields, adapter query fixtures, and the Git migration state. It is not a webMethods parser and cannot prove importability or runtime behavior without a matching Integration Server/Designer installation.
+
+## UI shell
+
+Run the static MVP UI with:
+
+```bash
+python -m http.server 8765 -d ui
+```
+
+Then open `http://localhost:8765/`. The UI currently loads `ui/mock-analysis.json`, which represents the `SaveOrderDB` customerEmail persistence change. That JSON file is the replacement point for a future analyzer API response.

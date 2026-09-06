@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ImpactIQ</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="ImpactIQ workspace">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">IQ</div>
+          <div>
+            <p class="eyebrow">ImpactIQ</p>
+            <h1>Change Impact Analysis</h1>
+          </div>
+        </div>
+
+        <nav class="nav-list" aria-label="Analysis sections">
+          <a href="#summary" class="nav-item active">Summary</a>
+          <a href="#assets" class="nav-item">Affected Assets</a>
+          <a href="#risk" class="nav-item">Risk</a>
+          <a href="#changes" class="nav-item">Changes</a>
+          <a href="#dependency" class="nav-item">Impact Path</a>
+          <a href="#tests" class="nav-item">Regression Tests</a>
+          <a href="#ai-explanation" class="nav-item">AI Explanation</a>
+        </nav>
+
+        <div class="status-panel">
+          <span id="statusDot" class="status-dot mock"></span>
+          <div class="status-text">
+            <strong id="statusLabel" class="status-label">Connecting…</strong>
+            <span id="statusDetail" class="status-detail">Checking analyzer API</span>
+          </div>
+        </div>
+      </aside>
+
+      <main class="workspace">
+        <section class="toolbar" aria-label="Git revision selection">
+          <div class="selector-group">
+            <label for="baseCommit">Base Git commit</label>
+            <select id="baseCommit"></select>
+          </div>
+          <div class="selector-group">
+            <label for="targetCommit">Target Git commit</label>
+            <select id="targetCommit"></select>
+          </div>
+          <button id="analyzeButton" type="button">Analyze Impact</button>
+        </section>
+
+        <section class="hero-band" aria-labelledby="analysisTitle">
+          <div>
+            <p class="eyebrow" id="analysisStatus">Ready</p>
+            <h2 id="analysisTitle">Select commits and analyze impact</h2>
+          </div>
+          <div class="metric-strip" aria-label="Analysis metrics">
+            <div>
+              <span id="assetCount">0</span>
+              <p>Affected assets</p>
+            </div>
+            <div>
+              <span id="riskScore">0</span>
+              <p>Risk score</p>
+            </div>
+            <div>
+              <span id="testCount">0</span>
+              <p>Recommended tests</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="summary" class="panel">
+          <div class="section-heading">
+            <p class="eyebrow">Change Summary</p>
+            <h2>What changed</h2>
+          </div>
+          <p id="summaryHeadline" class="summary-headline">Run analysis to load the current mock result.</p>
+          <ul id="summaryList" class="check-list"></ul>
+        </section>
+
+        <section id="assets" class="panel">
+          <div class="section-heading">
+            <p class="eyebrow">Affected Assets</p>
+            <h2>Impacted package elements</h2>
+          </div>
+          <div id="assetsGrid" class="asset-grid"></div>
+        </section>
+
+        <section id="risk" class="panel risk-layout">
+          <div class="section-heading">
+            <p class="eyebrow">Risk</p>
+            <h2>Assessment</h2>
+          </div>
+          <div class="risk-meter" aria-label="Risk score">
+            <svg viewBox="0 0 140 140" role="img" aria-labelledby="riskLevel">
+              <circle class="meter-bg" cx="70" cy="70" r="56"></circle>
+              <circle id="riskArc" class="meter-arc" cx="70" cy="70" r="56"></circle>
+            </svg>
+            <div class="risk-value">
+              <strong id="riskLevel">Not analyzed</strong>
+              <span id="riskScoreLarge">0</span>
+            </div>
+          </div>
+          <ul id="riskDrivers" class="driver-list"></ul>
+        </section>
+
+        <section id="changes" class="panel">
+          <div class="section-heading">
+            <p class="eyebrow">Change Details</p>
+            <h2>What exactly changed</h2>
+          </div>
+          <div id="changesList" class="changes-list"></div>
+        </section>
+
+        <section id="dependency" class="panel">
+          <div class="section-heading">
+            <p class="eyebrow">Impact Path</p>
+            <h2>Why are these assets affected?</h2>
+          </div>
+          <div id="dependencyGraph" class="dependency-graph" aria-label="Dependency graph"></div>
+        </section>
+
+        <section id="tests" class="panel">
+          <div class="section-heading">
+            <p class="eyebrow">Recommended Regression Tests</p>
+            <h2>Suggested coverage</h2>
+          </div>
+          <div id="testsList" class="tests-list"></div>
+        </section>
+
+        <section id="ai-explanation" class="panel">
+          <div class="section-heading">
+            <p class="eyebrow">AI Explanation Layer</p>
+            <h2>Analysis interpretation</h2>
+          </div>
+          <div id="aiExplanationCard" class="ai-card">
+            <div class="ai-status-badge">
+              <span id="aiBadgeDot" class="status-dot mock"></span>
+              <span id="aiStatusText">AI not configured</span>
+            </div>
+            <div id="aiContent" class="ai-content">
+              <p class="ai-placeholder">AI explanation is optional. It translates deterministic facts into natural language explanations without altering changes, impact, or risk scores.</p>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,116 @@
+{
+  "commits": {
+    "base": [
+      {
+        "id": "02ccdc8",
+        "label": "02ccdc8 - Baseline pipeline fix",
+        "description": "Fix OrderProcessing pipeline and GetCustomer mapping order"
+      }
+    ],
+    "target": [
+      {
+        "id": "working-tree-customer-email",
+        "label": "Working tree - Persist customerEmail",
+        "description": "Mock target representing the SaveOrderDB customerEmail persistence change"
+      }
+    ]
+  },
+  "analysis": {
+    "id": "mock-saveorderdb-customer-email",
+    "title": "Persist customer email during order save",
+    "status": "Mock analysis result",
+    "baseCommit": "02ccdc8",
+    "targetCommit": "working-tree-customer-email",
+    "summary": {
+      "headline": "SaveOrder now passes customerEmail into SaveOrderDB so the orders table can persist it.",
+      "items": [
+        "SaveOrderDBInput gained a new string field: customerEmail.",
+        "SaveOrder flow added one MAPCOPY from OrderDocument/order/customerEmail to SaveOrderDBInput/customerEmail.",
+        "SaveOrderDB SQL now inserts customer_email and expects one additional bind parameter.",
+        "No new service invocation was introduced; the execution path is unchanged."
+      ]
+    },
+    "affectedAssets": [
+      {
+        "name": "OrderProcessing.orderProcessing.services:SaveOrder",
+        "type": "Flow Service",
+        "changeType": "Mapping changed",
+        "risk": "Medium",
+        "description": "Adds a new input mapping into SaveOrderDBInput while preserving the existing orderId, customerId, finalAmount, discountAmount, and orderStatus mappings."
+      },
+      {
+        "name": "OrderProcessing.orderProcessing.adapters:SaveOrderDB",
+        "type": "Adapter Service",
+        "changeType": "Input signature changed",
+        "risk": "Medium",
+        "description": "SaveOrderDBInput now includes customerEmail as an additional string field."
+      },
+      {
+        "name": "SaveOrderDB/query.sql",
+        "type": "SQL fixture",
+        "changeType": "Persistence contract changed",
+        "risk": "Medium",
+        "description": "The insert statement now writes customer_email and has six placeholders instead of five."
+      },
+      {
+        "name": "OrderProcessing.orderProcessing.docs:OrderDocument",
+        "type": "Document Type",
+        "changeType": "Referenced field reused",
+        "risk": "Low",
+        "description": "The existing customerEmail field is now consumed by the persistence path; the document definition itself is unchanged."
+      }
+    ],
+    "risk": {
+      "level": "Medium",
+      "score": 64,
+      "drivers": [
+        "Adapter input contract changed for SaveOrderDB.",
+        "Database insert statement now requires a customer_email column and one more bind value.",
+        "Persistence assertions and downstream reporting may need updates.",
+        "No orchestration or scheduler behavior changed, limiting blast radius."
+      ]
+    },
+    "dependencies": {
+      "nodes": [
+        { "id": "scheduler", "label": "scheduler", "type": "Scheduler" },
+        { "id": "orderProcessing", "label": "OrderProcessing", "type": "Flow" },
+        { "id": "saveOrder", "label": "SaveOrder", "type": "Flow", "highlight": true },
+        { "id": "saveOrderDb", "label": "SaveOrderDB", "type": "Adapter", "highlight": true },
+        { "id": "ordersTable", "label": "orders.customer_email", "type": "Database", "highlight": true }
+      ],
+      "edges": [
+        { "from": "scheduler", "to": "orderProcessing", "label": "invokes" },
+        { "from": "orderProcessing", "to": "saveOrder", "label": "invokes" },
+        { "from": "saveOrder", "to": "saveOrderDb", "label": "maps customerEmail" },
+        { "from": "saveOrderDb", "to": "ordersTable", "label": "inserts" }
+      ]
+    },
+    "regressionTests": [
+      {
+        "name": "Order save includes customer email",
+        "priority": "High",
+        "scenario": "Run an order with OrderDocument/order/customerEmail populated and verify SaveOrderDB receives customerEmail."
+      },
+      {
+        "name": "Existing save mappings remain intact",
+        "priority": "High",
+        "scenario": "Verify orderId, customerId, finalAmount, discountAmount, and orderStatus are still mapped to SaveOrderDBInput."
+      },
+      {
+        "name": "Database insert parameter alignment",
+        "priority": "High",
+        "scenario": "Confirm the orders insert binds six values in the same order as the SQL column list."
+      },
+      {
+        "name": "Missing customer email behavior",
+        "priority": "Medium",
+        "scenario": "Run an order without customerEmail and verify expected null or validation behavior for the target database column."
+      },
+      {
+        "name": "Scheduler orchestration smoke test",
+        "priority": "Medium",
+        "scenario": "Invoke scheduler and confirm the existing OrderProcessing path still reaches SaveOrder and SendConfirmation."
+      }
+    ]
+  }
+}
