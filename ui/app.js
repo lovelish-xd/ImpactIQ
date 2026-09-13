@@ -10,6 +10,8 @@ const state = {
 };
 
 const elements = {
+  onboarding: document.querySelector("#onboarding"),
+  continueButton: document.querySelector("#continueButton"),
   baseCommit: document.querySelector("#baseCommit"),
   targetCommit: document.querySelector("#targetCommit"),
   analyzeButton: document.querySelector("#analyzeButton"),
@@ -35,6 +37,15 @@ const elements = {
   statusLabel: document.querySelector("#statusLabel"),
   statusDetail: document.querySelector("#statusDetail"),
 };
+
+function dismissOnboarding() {
+  if (!elements.onboarding) return;
+  elements.onboarding.classList.add("is-hidden");
+  document.body.classList.remove("onboarding-active");
+  window.setTimeout(() => elements.onboarding.remove(), 300);
+}
+
+elements.continueButton?.addEventListener("click", dismissOnboarding);
 
 function optionForCommit(commit) {
   const option = document.createElement("option");

@@ -6,7 +6,59 @@
     <title>ImpactIQ</title>
     <link rel="stylesheet" href="styles.css">
   </head>
-  <body>
+  <body class="onboarding-active">
+    <section id="onboarding" class="onboarding" aria-labelledby="onboardingTitle">
+      <div class="onboarding-shell">
+        <header class="onboarding-header">
+          <div class="onboarding-brand">
+            <img src="logo.png" alt="ImpactIQ" class="onboarding-logo">
+            <span>ImpactIQ</span>
+          </div>
+          <p class="onboarding-kicker">Change intelligence for webMethods</p>
+          <h1 id="onboardingTitle">See the impact before you ship.</h1>
+          <p class="onboarding-intro">Understand what changed, what it affects, why it matters, and what you should test.</p>
+        </header>
+
+        <div class="onboarding-flow" aria-label="ImpactIQ analysis flow">
+          <article class="onboarding-step">
+            <span class="step-number">01</span>
+            <h2>Git Versions</h2>
+            <p>Choose the base and target commits you want to compare.</p>
+          </article>
+          <article class="onboarding-step">
+            <span class="step-number">02</span>
+            <h2>Detect Changes</h2>
+            <p>ImpactIQ identifies the assets added, removed, or modified.</p>
+          </article>
+          <article class="onboarding-step">
+            <span class="step-number">03</span>
+            <h2>Trace Dependencies</h2>
+            <p>Follow each change through connected packages and services.</p>
+          </article>
+          <article class="onboarding-step">
+            <span class="step-number">04</span>
+            <h2>Assess Impact</h2>
+            <p>See which assets and business paths are likely to be affected.</p>
+          </article>
+          <article class="onboarding-step">
+            <span class="step-number">05</span>
+            <h2>Calculate Risk</h2>
+            <p>Combine change depth and dependency reach into a clear risk score.</p>
+          </article>
+          <article class="onboarding-step">
+            <span class="step-number">06</span>
+            <h2>Recommend Tests</h2>
+            <p>Get focused regression coverage for the areas that matter most.</p>
+          </article>
+        </div>
+
+        <footer class="onboarding-footer">
+          <p>From commit comparison to confident release decisions.</p>
+          <button id="continueButton" class="onboarding-continue" type="button">Get Started <span aria-hidden="true">→</span></button>
+        </footer>
+      </div>
+    </section>
+
     <div class="app-shell">
       <aside class="sidebar" aria-label="ImpactIQ workspace">
         <div class="brand">
